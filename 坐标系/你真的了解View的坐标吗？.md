@@ -1,6 +1,8 @@
 ## 闲聊
 
-View，对我们来说在熟悉不过了，从接触Android开始，我们就一直在接触View，界面当中到处都是 View，比如我们经常用到的TextView，Button，LinearLayout等等，但是我们真的了解View吗？尤其是View的坐标。mLeft,mRight,mY,mX,mTranslationY,mScoollY,相对于屏幕的坐标等等这些概念你真的清楚了吗？如果真的清楚了，那你没有必要度这篇博客，如果你还是有一些模糊，建议花上几分钟的时间读一下，这篇博客较短，花个几分钟的时间就可以阅读完。
+View，对我们来说在熟悉不过了，从接触Android开始，我们就一直在接触View，界面当中到处都是 View，比如我们经常用到的TextView，Button，LinearLayout等等，但是我们真的了解View吗？尤其是View的坐标。
+
+mLeft,mRight,mY,mX,mTranslationY,mScoollY,相对于屏幕的坐标等等这些概念你真的清楚了吗？如果真的清楚了，那你没有必要度这篇博客，如果你还是有一些模糊，建议花上几分钟的时间读一下，这篇博客较短，花个几分钟的时间就可以阅读完。
 
 为什么要写这一篇博客呢？
 
@@ -8,15 +10,15 @@ View，对我们来说在熟悉不过了，从接触Android开始，我们就一
 
 这篇博客主要讲解一下问题
 
-- View 的 getLeft()和get Right()和 getTop() 和getBottom()
-- View 的 getＹ()， getTranslationY() 和 getTop() 之间的联系
+- View 的 getLeft() 和 getRight() 和 getTop() 和 getBottom()
+- View 的 getY()， getTranslationY() 和 getTop() 之间的联系
 - View 的 getScroolY 和 View 的 scrollTo() 和 scrollBy()
-- event.getY 和 event.getRawY()
+- event.getY() 和 event.getRawY()
 - 扩展，怎样获取状态栏（StatusBar）和标题栏（titleBar）的高度
 
 ## 基本概念
 
-![img](http://upload-images.jianshu.io/upload_images/2050203-0f00e9fa06081e32.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![img](images/坐标系2.jpg)
 
 简单说明一下（上图Activity采用默认Style，状态栏和标题栏都会显示）：最大的草绿色区域是屏幕界面，红色次大区域我们称之为“应用界面区域”，最小紫色的区域我们称之为“View绘制区域”；屏幕顶端、应用界面区之外的那部分显示手机电池网络运营商信息的为“状态栏”，应用区域顶端、View绘制区外部显示Activity名称的部分我们称为“标题栏”。
 
@@ -36,10 +38,10 @@ View，对我们来说在熟悉不过了，从接触Android开始，我们就一
 ## View 的 getLeft()和getRight()和 getTop() 和getBottom()
 
 ```java
-View.getLeft() ;
-View.getTop() ;
+View.getLeft();
+View.getTop();
 View.getBottom();
-View.getRight() ;
+View.getRight();
 ```
 
 top是左上角纵坐标，left是左上角横坐标，right是右下角横坐标，bottom是右下角纵坐标,都是相对于它的**直接父View**而言的，而不是相对于**屏幕**而言的。这一点要区分清楚。那那个坐标是相对于屏幕而言的呢，以及要怎样获取相对于屏幕的坐标呢？
@@ -49,45 +51,45 @@ top是左上角纵坐标，left是左上角横坐标，right是右下角横坐�
 第一种方法，onWindowFocusChanged()方法里面进行调用
 
 ```java
-      @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-     super.onWindowFocusChanged(hasFocus); 
-     //确保只会调用一次
-      if(first){
-        first=false;
-        final int[] location = new int[2];     
-        mView.getLocationOnScreen(location);
-        int x1 = location[0]  ;
-        int y1 = location[1]  ;
-        Log.i(TAG, "onCreate: x1=" +x1);
-        Log.i(TAG, "onCreate: y1=" +y1);
-      }
+@Override
+public void onWindowFocusChanged(boolean hasFocus) {
+  super.onWindowFocusChanged(hasFocus); 
+  //确保只会调用一次
+   if(first){
+     first=false;
+     final int[] location = new int[2];     
+     mView.getLocationOnScreen(location);
+     int x1 = location[0]  ;
+     int y1 = location[1]  ;
+     Log.i(TAG, "onCreate: x1=" +x1);
+     Log.i(TAG, "onCreate: y1=" +y1);
    }
+}
 ```
 
 第二种方法，在视图树绘制完成的时候进行测量
 
 ```java
-        mView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver
-                .OnGlobalLayoutListener() {
+mView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver
+        .OnGlobalLayoutListener() {
 
-            @Override
-            public void onGlobalLayout() {
-                //   移除监听器，确保只会调用一次，否则在视图树发挥改变的时候又会调用
-                mView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                final int[] location = new int[2];
-                mView.getLocationOnScreen(location);
-                int x1 = location[0];
-                int y1 = location[1];
-                Log.i(TAG, "onCreate: x1=" + x1);
-                Log.i(TAG, "onCreate: y1=" + y1);
-            }
-        });
+    @Override
+    public void onGlobalLayout() {
+        //   移除监听器，确保只会调用一次，否则在视图树发挥改变的时候又会调用
+        mView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+        final int[] location = new int[2];
+        mView.getLocationOnScreen(location);
+        int x1 = location[0];
+        int y1 = location[1];
+        Log.i(TAG, "onCreate: x1=" + x1);
+        Log.i(TAG, "onCreate: y1=" + y1);
+    }
+});
 ```
 
 ## View 的 getＹ()， getTranslationY() 和 getTop() 之间的联
 
-getＹ()
+getY()
 
 > Added in API level 14
 > The visual y position of this view, in pixels.(返回的是View视觉上的图标，即我们眼睛看到位置的Y坐标，默认值跟getTop()相同，别急，下面会解释）
@@ -105,21 +107,22 @@ public float getY() {
    return mTop + getTranslationY();
 }
 
-    @ViewDebug.ExportedProperty(category = "drawing")
-    public float getTranslationY() {
-        return mRenderNode.getTranslationY();
-    }
-    @ViewDebug.CapturedViewProperty
-    public final int getTop() {
-        return mTop;
-    }
+@ViewDebug.ExportedProperty(category = "drawing")
+public float getTranslationY() {
+    return mRenderNode.getTranslationY();
+}
+
+@ViewDebug.CapturedViewProperty
+public final int getTop() {
+    return mTop;
+}
 ```
 
 从以上的源码我们可以知道 getY()= getTranslationY()+ getTop ()，而 getTranslationY() 的默认值是0，除非我们通过 setTranlationY() 来改变它，这也就是我们上面上到的 getY 默认值跟 getTop()相同
 
 那我们要怎样改变 top值 和 Y 值呢？ 很明显就是调用相应的set方法 ，即 setY() 和setTop() ，就可以改变他们 的值。
 
-## View 的 getScroolY 和 View 的 scrollTo() 和 scrollBy()
+## View 的 getScroolY() 和 View 的 scrollTo() 和 scrollBy()
 
 getScrollY是一个比较特别的函数，因为它涉及一个值叫mScrollY，简单说，getScrollY一般得到的都是0，除非你调用过scrollTo或scrollBy这两个函数来改变它。
 
@@ -141,6 +144,7 @@ public void scrollTo(int x, int y) {
         }
     }
 }
+
 public void scrollBy(int x, int y) {
     scrollTo(mScrollX + x, mScrollY + y);
 }
@@ -163,7 +167,7 @@ public final int getHeight() {
 我们可以看到 Android的 height 是由 mBottom 和 mTop 共同得出的，那我们要怎样设置Android的高度呢？有人会说直接在xml里面设置 android:height="" 不就OK了，那我们如果要动态设置height的高度呢，怎么办？你可能会想到 setWidth()方法？但是我们找遍了View的所有方法，都没有发现 setWidth()方法，那要怎样动态设置height呢？其实有两种方法
 
 ```java
- int width=50;
+int width=50;
 int height=100;
 ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
 if(layoutParams==null){
@@ -196,58 +200,55 @@ public void setLayoutParams(ViewGroup.LayoutParams params) {
 
 因此我们如果在api 14 以后 ，在动画执行过程中，要改变View的状态，推荐使用setTranslationY()和setTranslationX（0等方法，而 尽量避免改变LayoutParams.因为性能嫌贵来说较差。
 
-## event.getY 和 event.getRawY()
+## event.getY() 和 event.getRawY()
 
 要区分于MotionEvent.getRawX() 和MotionEvent.getX();,
 
 在public boolean onTouch(View view, MotionEvent event) 中，当你触到控件时，x,y是相对于该控件左上点（控件本身）的相对位置。 而rawx,rawy始终是相对于屏幕的位置。getX()是表示Widget相对于自身左上角的x坐标,而getRawX()是表示相对于屏幕左上角的x坐标值 (注意:这个屏幕左上角是手机屏幕左上角,不管activity是否有titleBar或是否全屏幕)。
 
-![img](http://upload-images.jianshu.io/upload_images/2050203-8cf2b82342f5f76b.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![img](images/坐标系6.jpg)
 
 ## 扩展，怎样获取状态栏（StatusBar）和标题栏（titleBar）的高度
 
 ```java
-     public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
+public void onWindowFocusChanged(boolean hasFocus) {
+    super.onWindowFocusChanged(hasFocus);
 
-        //屏幕
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-        Log.e(TAG, "屏幕高:" + dm.heightPixels);
+    //屏幕
+    DisplayMetrics dm = new DisplayMetrics();
+    getWindowManager().getDefaultDisplay().getMetrics(dm);
+    Log.e(TAG, "屏幕高:" + dm.heightPixels);
 
-        //应用区域
-        Rect outRect1 = new Rect();
-        getWindow().getDecorView().getWindowVisibleDisplayFrame(outRect1);
-        //这个也就是状态栏的 高度
-        Log.e(TAG, "应用区顶部" + outRect1.top);
+    //应用区域
+    Rect outRect1 = new Rect();
+    getWindow().getDecorView().getWindowVisibleDisplayFrame(outRect1);
+    //这个也就是状态栏的 高度
+    Log.e(TAG, "应用区顶部" + outRect1.top);
 
-        Log.e(TAG, "应用区高" + outRect1.height());
+    Log.e(TAG, "应用区高" + outRect1.height());
 
-        // 这个方法必须在有actionBar的情况下才能获取到状态栏的高度
-        //View绘制区域
-        Rect outRect2 = new Rect();
-        getWindow().findViewById(Window.ID_ANDROID_CONTENT).getDrawingRect(outRect2);
-        Log.e(TAG, "View绘制区域顶部-错误方法：" + outRect2.top);   //不能像上边一样由outRect2.top获取，这种方式获得的top是0，可能是bug吧
-        Log.e(TAG, "View绘制区域高度：" + outRect2.height());
+    // 这个方法必须在有actionBar的情况下才能获取到状态栏的高度
+    // View绘制区域
+    Rect outRect2 = new Rect();
+    getWindow().findViewById(Window.ID_ANDROID_CONTENT).getDrawingRect(outRect2);
+  	// 不能像上边一样由outRect2.top获取，这种方式获得的top是0，可能是bug吧
+    Log.e(TAG, "View绘制区域顶部-错误方法：" + outRect2.top);
+    Log.e(TAG, "View绘制区域高度：" + outRect2.height());
 
-        int viewTop = getWindow().findViewById(Window.ID_ANDROID_CONTENT).getTop();   //要用这种方法
-        Log.e(TAG, "View绘制区域顶部-正确方法：" + viewTop);
+    int viewTop = getWindow().findViewById(Window.ID_ANDROID_CONTENT).getTop();//要用这种方法
+    Log.e(TAG, "View绘制区域顶部-正确方法：" + viewTop);
 
-        int titleBarHeight=viewTop;
+    int titleBarHeight=viewTop;
 
-        Log.d(TAG, "onWindowFocusChanged: 标题栏高度titleBarHeight=" +titleBarHeight);
-
-    }
+    Log.d(TAG, "onWindowFocusChanged: 标题栏高度titleBarHeight=" +titleBarHeight);
+}
 ```
 
 这里我们需要注意的 是在ActionBar存在的情况下，通过这种方法我们才能够得出titleBar的高度，否则是无法得到的，因为viewTop 为0.
 
 这篇博客到此为止，关于更多自定义View 的一些例子，可以看我以下的博客
 
-[**常用的自定义View例子一(FlowLayout)**](http://blog.csdn.net/gdutxiaoxu/article/details/51765428)
-
-[**自定义View常用例子二（点击展开隐藏控件，九宫格图片控件）**](http://blog.csdn.net/gdutxiaoxu/article/details/51772308)
-
-[**常用的自定义View例子三（MultiInterfaceView多界面处理）**](http://blog.csdn.net/gdutxiaoxu/article/details/51804844)
-
-[**常用的自定义控件四（QuickBarView）**](http://blog.csdn.net/gdutxiaoxu/article/details/51804865)
+- [常用的自定义View例子一(FlowLayout)](http://blog.csdn.net/gdutxiaoxu/article/details/51765428)
+- [自定义View常用例子二（点击展开隐藏控件，九宫格图片控件）](http://blog.csdn.net/gdutxiaoxu/article/details/51772308)
+- [常用的自定义View例子三（MultiInterfaceView多界面处理）](http://blog.csdn.net/gdutxiaoxu/article/details/51804844)
+- [常用的自定义控件四（QuickBarView）](http://blog.csdn.net/gdutxiaoxu/article/details/51804865)
