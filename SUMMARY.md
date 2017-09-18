@@ -1,5 +1,6 @@
 # Summary
 
+* [前言](README.md)
 * [坐标系](坐标系\README.md)
     * [Android应用坐标系统全面详解](坐标系\Android应用坐标系统全面详解.md)
     * [Android的坐标系](坐标系\Android的坐标系.md)
@@ -32,9 +33,9 @@
     * [腾讯微博列表展示的功能实现](自定义控件\腾讯微博列表展示的功能实现.md)
     * [无限滚动的图片](自定义控件\无限滚动的图片.md)
     * [新闻频道管理的炫酷实现](自定义控件\新闻频道管理的炫酷实现.md)
-    * [自定义控件：侧滑面板](自定义控件\自定义控件：侧滑面板.md)
-    * [自定义控件：快速索引](自定义控件\自定义控件：快速索引.md)
-    * [自定义控件：SlidingMenu，侧边栏，侧滑菜单](自定义控件\自定义控件：SlidingMenu，侧边栏，侧滑菜单.md)
+    * [侧滑面板](自定义控件\侧滑面板.md)
+    * [快速索引](自定义控件\快速索引.md)
+    * [SlidingMenu，侧边栏，侧滑菜单](自定义控件\SlidingMenu，侧边栏，侧滑菜单.md)
     * [自定义dialog](自定义控件\自定义dialog.md)
     * [RecyclerView列表控件漂亮时间线实现](自定义控件\RecyclerView列表控件漂亮时间线实现.md)
 * [PullToRefresh](PullToRefresh\README.md)

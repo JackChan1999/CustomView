@@ -1,6 +1,8 @@
 ## 前言
 下拉刷新组件在开发中使用率是非常高的，基本上联网的APP都会采用这种方式。对于开发效率而言，使用获得大家认可的开源库必然是效率最高的，但是不重复发明轮子的前提是你得自己知道轮子是怎么发明出来的，并且自己能够实现这些功能。否则只是知道其原理，并没有去实践那也就是纸上谈兵了。做程序猿，动手做才会遇到真正的问题，否则就只是自以为是的认为自己懂了。今天这篇文章就是以自己重复发明轮子这个出发点而来的，通过实现经典、使用率较高的组件来提高自己的认识。下面我们就一起来学习吧。
+
 整体布局结构
+
 |                    图1                    |                    图2                    |
 | :--------------------------------------: | :--------------------------------------: |
 | <img src="http://img.blog.csdn.net/20140913165858954?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYmJveWZlaXl1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" width="300" /> | <img src="http://img.blog.csdn.net/20140913165828046?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYmJveWZlaXl1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" width="300" /> |
@@ -11,7 +13,8 @@
 
 ## 下拉刷新基本原理
 
-基本原理就是在用户滑动屏幕上的组件时，在onInterceptTouchEvent方法中判断是否到了ContentView （这里我们以ListView为例来说明）的最顶端，如果到了最顶端且用户还继续向下滑，那么会拦截触摸事件避免它分发到ListView，即在onInterceptTouchEvent中返回true （ 不太清楚的可以参考资料如下 : [Android Touch事件分发过程](http://blog.csdn.net/bboyfeiyu/article/details/38958829)。 ），这样就将触摸事件分发到了onTouchEvent函数中，我们对于用户触摸事件的处理逻辑主要都在这个函数中。如果该函数返回false，那么触摸事件则会分发给其Child View，这里的这个Child View就是ListView了，当返回false时用户滑动屏幕时就会滚动ListView。
+基本原理就是在用户滑动屏幕上的组件时，在onInterceptTouchEvent方法中判断是否到了ContentView （这里我们以ListView为例来说明）的最顶端，如果到了最顶端且用户还继续向下滑，那么会拦截触摸事件避免它分发到ListView，即在onInterceptTouchEvent中返回true（ 不太清楚的可以参考资料如下 : [Android Touch事件分发过程](http://blog.csdn.net/bboyfeiyu/article/details/38958829)。 ），这样就将触摸事件分发到了onTouchEvent函数中，我们对于用户触摸事件的处理逻辑主要都在这个函数中。如果该函数返回false，那么触摸事件则会分发给其Child View，这里的这个Child View就是ListView了，当返回false时用户滑动屏幕时就会滚动ListView。
+
 ```java
 /* 
  * 在适当的时候拦截触摸事件，这里指的适当的时候是当mContentView滑动到顶部，并且是下拉时拦截触摸事件，否则不拦截，交给其child 
@@ -64,6 +67,7 @@ public boolean onInterceptTouchEvent(MotionEvent ev) {
 在有效的滑动距离之内，我们判断当前组件的状态，如果不是正在刷新的状态，那么我们根据当前ListView的paddingTop的高度来设置不同的值，paddingTop如果高度大于ListView高度的70%，那么我们将当前状态设置为“释放可刷新”状态，即STATUS_RELEASE_TO_REFRESH状态；反之，我们设置状态为“继续下拉”状态，即“STATUS_PULL_TO_REFRESH”。通过这个paddingTop高度我们来规定当用户下拉距离到一定的距离后才出发刷新操作，否则视为无效下拉。然而不管这个时候是什么状态，我们都会修改Header的padding Top属性，从而达到拉伸header的效果。
 
 当状态为“释放可刷新”时，我们抬起手指，会出发ACTION_UP事件，此时我们在该事件中进行下拉刷新操作。onTouchEvent代码如下 :
+
 ```java
 /* 
  * 在这里处理触摸事件以达到下拉刷新或者上拉自动加载的问题 
@@ -156,7 +160,7 @@ private final void doRefresh() {
 ## 滑动到底部自动加载
 
 滑动到底部自动加载相对来说要简单得多，我们也是以ContentView是ListView的情况来说明。原理就是监听ListView （ 即 ContentView ）的的滚动事件，因此如果ContentView的类型不支持滚动事件，则不能实现该功能。listview符合要求，因此其能实现自动加载。我们在onScroll函数中判断listview是否到了最后一项，如果到了最后一项，那么显示出footer，并且开始加载。当用户调用loadMoreComplete函数时代表加载结束。此时隐藏footer，整个过程结束。
-​    
+
 ```java
 /* 
  * 滚动事件，实现滑动到底部时上拉加载更多 
