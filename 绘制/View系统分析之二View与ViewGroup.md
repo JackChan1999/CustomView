@@ -23,9 +23,9 @@
 
 在[Android View系统分析之从setContentView说开来(一)](自定义控件/View系统分析之一从setContentView说开来.md)中的ViewGroup章节中我们说了，Android中的视图树是按照如下结构来组织的，即对顶层的是一个ViewGroup，然后其子节点可以是ViewGroup、View，只有ViewGroup下能够包含子节点，View则是叶子节点。如图 :
 
-![](img/viewgroup.png)
+![](images/viewgroup.png)
 
-![](img/view_arc.png)
+![](images/view_arc.png)
 
 View是屏幕上所有可见元素的根类，其中ViewGroup也是View的子类。View的官方说明如下 :
 
@@ -51,7 +51,7 @@ View是屏幕上所有可见元素的根类，其中ViewGroup也是View的子类
 
 简单来说，View树解析完以后到显示的过程，主要会经历如下几个过程。
 
-![](img/measure.png)
+![](images/measure.png)
 
 即ViewRoot首先会发送一个遍历视图树的消息，然后会调用performTraversals()函数来遍历整个视图树，并且调用DecorView的measure()、layout()、draw()方法，这三个过程分别为测量View的大小、计算View的显示过程、绘制内容，它们只是一个模板，具体的实现都是在onMeasure()、onLayout()、onDraw()中。遍历视图树中每个子View中的measure()、layout()、draw()这几个过程，如果子View是ViewGroup类型，那么又会遍历调用这个ViewGroup的所有子View的这三个过程，直到遍历完整个视图树为止。经历了这三个过程，UI系统就知道了View的大小和它所在的位置坐标以后，我们就可以把内容绘制到相应的地方，然后内容就显示出来了，就是这么回事！
 
@@ -585,7 +585,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 
 呵，这个我们可见多了，每个布局用的xml中全都用这个。其实原理是这样的，res/values/attrs.xml中内容会被编译成R类，而R的完整路径就是工程的包名.R，注意，是工程的包名，而不是自定义View所在的包，因此你引入了工程的包名，Android系统就可以找到对应的R类，从而找到你的自定义属性，而你的自定义属性名又与你的自定义View类名一致，这样也就对应上了。
 
-<img src="img/customattr.png" width="400" />
+<img src="images/customattr.png" width="400" />
 
 例如MyTextView所在的包为com.example.touch_event.viewsystem，但是我们的工程的包却是com.example.touch，因此R所在的路径就是com.example.touch.R，所以我在引入自定义属性的命名空间是需要引入的是com.example.touch，而不是com.example.touch_event.viewsystem。我们来试用一下吧：
 
@@ -617,7 +617,7 @@ main.xml :
 
 运行以后效果如下图:
 
-<img src="img/view1.png" width="300"/>
+<img src="images/view1.png" width="300"/>
 
 
 可以看到，我们的View正常运行起来了。但是我们设置的layout_width和layout_height都是设置为wrap_content的，怎么就变成了match_parent了呢？其实上文已经多次提到，View的默认onMeasure都只是支持match_parent，如果需要wrap_content,你需要覆写onMeasure来实现。那我们给MyTextView加上自己的onMeasure吧。
@@ -653,7 +653,7 @@ main.xml :
 
 最后运行看效果 :
 
-<img src="img/view2.png" width="300"/>
+<img src="images/view2.png" width="300"/>
 
 
 效果不怎样，但总归是支持wrap_content了，细节就先不管了。
@@ -701,11 +701,9 @@ public class VerticalLinearLayout extends ViewGroup {
 
     @Override  
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {  
-
-        //  
+		 
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);  
-
-        //  
+		
         int widthSpecMode = MeasureSpec.getMode(widthMeasureSpec);  
         int widthSpecSize = MeasureSpec.getSize(widthMeasureSpec);  
         int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);  
@@ -756,14 +754,12 @@ public class VerticalLinearLayout extends ViewGroup {
 
     @Override  
     protected void onLayout(boolean changed, int l, int t, int r, int b) {  
-
-        //  
+		
         int left = getPaddingLeft();  
         int top = getPaddingTop();  
 
-        //  
         int childCount = getChildCount();  
-        //  
+
         for (int i = 0; i < childCount; i++) {  
             View childView = getChildAt(i);  
             if (childView.getVisibility() != View.GONE) {  
@@ -874,8 +870,8 @@ main.xml的定义 :
 
 效果图 :
 
-|         图1 ( 宽、高都为match_parent)         |          图2( 宽、高都为wrap_parent)          |
-| :-------------------------------------: | :-------------------------------------: |
-| <img src="img/view3.png" width="300" /> | <img src="img/view4.png" width="300" /> |
+|         图1 ( 宽、高都为match_parent)          |          图2( 宽、高都为wrap_parent)           |
+| :--------------------------------------: | :--------------------------------------: |
+| <img src="images/view3.png" width="300" /> | <img src="images/view4.png" width="300" /> |
 
 依然是很丑陋，不过不要紧，大致原理清晰就行。

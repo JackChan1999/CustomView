@@ -505,6 +505,6 @@ private final void handleLaunchActivity(ActivityClientRecord r, Intent customInt
 
 如上述代码，在调用ActivityThread的handleLaunchActivity(ActivityClientRecord r, Intent customIntent)后会调用performLaunchActivity函数来创建Activity，并且将Activity与Application关联上，然后调用Activity的onCreate、onStart函数。再之后是调用handleResumeActivity函数，handleResumeActivity函数又调用performResumeActivity函数来回调Activity的onResume函数，之后将Activity的DecorView设置为可见，并且添加到WindowManager中，此时Activity也就显示在屏幕上了。时序图大致如下 :
 
-![](img/activity.png)
+![](images/activity.png)
 
 由此，我们可以得出，在Activity的onResume方法中，Activity的内容还是没有可见，执行完OnResume之后才会可见。那么Activity的DecorView又是如何通过WindowManager显示在屏幕上的呢？我们下篇文章再来学习吧

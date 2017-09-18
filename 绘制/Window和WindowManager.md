@@ -6,9 +6,9 @@ Window是一个抽象类，它概括了Android窗口的基本属性和基本功�
 
 创建完Window之后，Activity会为该Window设置回调，Window接收到外界状态改变时就会回调到Activity中。在activity中会调用setContentView()函数，它是调用window.setContentView()完成的，而Window的具体实现是PhoneWindow，所以最终的具体操作是在PhoneWindow中，PhoneWindow的setContentView方法第一步会检测DecorView是否存在，如果不存在，就会调用generateDecor函数直接创建一个DecorView；第二步就是将Activity的视图添加到DecorView的mContentParent中；第三步是回调Activity中的onContentChanged方法通知Activity视图已经发生改变。这些步骤完成之后，DecorView还没有被WindowManager正式添加到Window中，最后调用Activity的onResume方法中的makeVisible方法才能真正地完成添加和现实过程，Activity的视图才能被用户看到。
 
-![](img/window.png) ![](img/window2.png)
+![](images/window.png) ![](images/window2.png)
 
-![](img/window3.png)
+![](images/window3.png)
 
 ```java
 // 隐藏标题栏，必须在setContentView()之前调用

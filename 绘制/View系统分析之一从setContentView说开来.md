@@ -12,7 +12,6 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);  
         setContentView(R.layout.main_activity);  
     }  
-
 }  
 ```
 main_activity.xml大致是这样的 :
@@ -33,7 +32,7 @@ main_activity.xml大致是这样的 :
 ```
 然后执行程序，我们就可以看到模拟器中的Hello World了。
 
-![](../assets/view1.png)
+![](images/view5.png)
 
 我们在整个过程中做的事情很少，在我们的main_activity.xml我们只有一个显示文本的TextView，但是在上图中却还多了一个title。我们好奇的是整个过程是怎么工作的？对于大型系统来说细节总是复杂的，在下水平有限，所以我们今天只来理一下它的基本脉络。
 
@@ -342,7 +341,7 @@ ViewGroup contentParent = (ViewGroup)findViewById(ID_ANDROID_CONTENT);
 
 获取的就是xml中id为content的FrameLayout，这个content就是我们的内容显示区域。整个布局对应的效果如下 :
 
-![](../assets/view2.png)
+![](images/view6.png)
 
 这两个区域就组成了mDecor视图，我们的main_activity.xml就是放在内容视图这个区域的。 
 
@@ -432,7 +431,7 @@ ViewGroup从语义上来说就是视图组，它也继承自View类，它其实�
 ```
 我们通过ViewGroup来组织、管理子视图，例如我们常见的FrameLayout、LinearLayout、RelativeLayout、ListView等都是ViewGroup类型，总之只要能包含其他View或者ViewGroup的都是ViewGroup类型。使用ViewGroup来构建视图树。
 
-![](img/viewgroup.png)
+![](images/viewgroup.png)
 
 ## 5. View
 
@@ -451,10 +450,10 @@ TextView、Button、ImageView、FrameLayout、LinearLayout、ListView等都是Vi
 
 这样，ViewGroup类型的视图管理嵌套在里面的ViewGroup以及View控件组成了丰富多彩的用户界面。例如我们开篇的Hello World的视图结构是这样的 :
 
-<img src="../assets/view4.png" width="400" />
+<img src="images/view7.png" width="400" />
 
 ## 6. 总结
 
-<img src="../assets/view5.png" width="400" />
+<img src="images/view8.png" width="400" />
 
 整个窗口由Title区域和Content区域组成，Content区域就是我们要显示内容的区域，在这个区域中mContentParent是根ViewGroup，由mContentParent组织、管理其子视图，从而构建整个视图树。当Activity启动时，就将这些内容就会显示在手机上。
