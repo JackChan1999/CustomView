@@ -18,6 +18,7 @@
     * [View系统分析之三Activity的启动与显示](绘制\View系统分析之三Activity的启动与显示.md)
     * [Window和WindowManager](绘制\Window和WindowManager.md)
     * [WindowManager的使用](绘制\WindowManager的使用.md)
+    * [硬件加速](绘制\硬件加速.md)
 * [屏幕适配](屏幕适配\README.md)
     * [屏幕适配](屏幕适配\屏幕适配.md)
 * [事件分发](事件分发\README.md)
